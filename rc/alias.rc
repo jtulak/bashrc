@@ -45,8 +45,12 @@ alias vim="vim -p" # open with tabs
 alias cvs="cvs -z3"
 
 # Docker aliases
-# use single ' to avoid expansion at the time of sourcing and deffer it for runtime
-alias fedora='docker run --rm -ti -v "$(pwd)":/workdir -h fedock jtulak/myfedora /bin/bash'
+# ------------
+# Use single ' to avoid expansion at the time of sourcing and deffer it 
+# for runtime. Also, do not include this command when already in the container
+if [ $HOSTNAME != "fedock" ]; then
+	alias fedora='docker run --rm -ti -v "$(pwd)":/workdir -h fedock jtulak/myfedora /bin/bash'
+fi
 
 
 function lsdir() {
