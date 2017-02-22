@@ -1,0 +1,58 @@
+# Bash configuration
+# Jan Tulak <jan@tulak.me>
+# Uses tabstop=4; shiftwidth=4 tabs; foldmarker={{{,}}};
+# vim:set syntax=sh:
+
+if [[ $platform == "linux" ]]; then
+  alias ls="ls --color=auto"
+  alias mvim="gvim"
+  alias dd="dd status=progress"
+elif [[ $platform == "osx" ]]; then
+  alias ls="ls"
+  alias gvim="mvim"
+  function brew_find_pkg {
+    file_to_search="$@"
+    list_of_brew_pkgs=$(brew list)
+
+    for package in $list_of_brew_pkgs; do
+        brew ls $package | grep -E -q "/${file_to_search}$"
+        if [ $? -eq 0 ]; then
+            echo $package
+            break
+        fi
+    done
+  }
+fi
+
+alias kinit="kinit jtulak@REDHAT.COM"
+alias make="make --warn-undefined-variable"
+alias ll="ls -lah"
+alias rm="rm -i"
+alias cp="cp -i"
+alias l="ls -ail"
+alias cl="clear"
+alias ga="git add"
+alias gc="git commit --signoff"
+alias gf="git fetch"
+#alias gl="git log --pretty=oneline --graph --color --decorate --all"
+alias gl="git log --pretty=format:'%h%d %s [%an]' --decorate --all --graph --color=always| ~/.bash/git-log-color.awk | less -RXFS"
+alias gp="git push"
+alias gr="git rebase"
+alias reboot="shutdown -r now"
+
+alias vim="vim -p" # open with tabs
+
+alias cvs="cvs -z3"
+
+# Docker aliases
+alias fedora="docker run --rm -ti -v '$(pwd)':/workdir -h fedock jtulak/myfedora /bin/bash"
+
+
+function lsdir() {
+	du -h --max-depth=1 $1 |sort -h
+}
+
+# hack for screen when sudo su-ing
+function screen() {
+  /usr/bin/script -q -c "/usr/bin/screen ${*}" /dev/null
+}

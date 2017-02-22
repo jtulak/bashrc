@@ -1,0 +1,131 @@
+# Bash configuration
+# Jan Tulak <jan@tulak.me>
+# vim:set syntax=sh foldmethod=marker:
+
+# inspired by https://github.com/demure/dotfiles/blob/master/subbash/prompt
+
+wd="$(dirname "$BASH_SOURCE")"
+source "$wd/../colors"
+
+# Define the stat binary - linux/osx compatiblity attempt
+STAT="gstat"
+if ! which "$STAT" &>/dev/null; then
+	STAT="stat"
+fi
+
+export PROMPT_COMMAND=__prompt_command	# Func to gen PS1 after CMDs
+
+### Prompt Command ### {{{
+function __prompt_command() {
+	local EXIT="$?"	# This needs to be first
+	PS1=""
+
+	if [ $UID -eq "0" ];then
+		PS1+="${Red}\h \W ->${Color_off} "		# Set prompt for root
+	else
+		PS1+="${BWhite}[${Color_off}"
+		if [ $EXIT != 0 ]; then
+			## can add `kill -l $?` to test to filter backgrounded
+			PS1+="${Red}${EXIT}${Color_off} " # Add exit code, if non 0
+		fi
+		### Machine Test ### {{{
+		if [ $HOSTNAME == 'honza-mbp' ]; then
+			local PSCol="$BYellow"
+		elif [ $HOSTNAME == 'jtulak-arch' ]; then
+			local PSCol="$BPurple"
+		elif [ $HOSTNAME == 'home2' ]; then
+			local PSCol="$BBlue"
+		elif [[ $HOSTNAME == *fit.vutbr.cz ]]; then
+			local PSCol="$BGreen"
+		else
+			local PSCol="$BWhite"
+		fi
+		### Machine Test ### }}}
+
+		PS1+="${PSCol}\u@\h"
+		PS1+=" ${BWhite}\W${Color_off}"
+
+		### Add Git Status ### {{{
+		## author https://github.com/demure/dotfiles/blob/master/subbash/prompt
+		## Inspired by http://www.terminally-incoherent.com/blog/2013/01/14/whats-in-your-bash-prompt/
+		if [[ $(command -v git) ]]; then
+			if [[ $($STAT -f -L -c %T "$PWD") != *fuse* ]]; then
+				local GStat="$(git status --porcelain -b 2>/dev/null | tr '\n' ':')"
+
+				if [ "$GStat" ]; then
+					### Fetch Time Check ### {{{
+					local LAST=$(stat -c %Y $(git rev-parse --git-dir 2>/dev/null)/FETCH_HEAD 2>/dev/null)
+					if [ "${LAST}" ]; then
+						local TIME=$(echo $(date +"%s") - ${LAST} | bc)
+						## Check if more than 60 minutes since last
+						if [ "${TIME}" -gt "3600" ]; then
+							git fetch 2>/dev/null
+							PS1+=' +'
+							## Refresh var
+							local GStat="$(git status --porcelain -b 2>/dev/null | tr '\n' ':')"
+						fi
+					fi
+					### End Fetch Check ### }}}
+
+					### Test For Changes ### {{{
+					## Change this to test for 'ahead' or 'behind'!
+					local GChanges="$(echo ${GStat} | tr ':' '\n' | grep -v "^$" | grep -v "^\#\#" | wc -l | tr -d ' ')"
+					if [ "$GChanges" == "0" ]; then
+						local GitCol=$Green
+					else
+						local GitCol=$Red
+					fi
+					### End Test Changes ### }}}
+
+					### Find Branch ### {{{
+					local GBra="$(echo ${GStat} | tr ':' '\n' | grep "^##" | cut -c4- | grep -o "^[-_a-zA-Z]\{1,\}[^\.]")"
+					if [ "$GBra" ]; then
+						if [ "$GBra" == "master" ]; then
+							local GBra="M"			# Because why waste space
+						fi
+					else
+						local GBra="ERROR"			# It could happen supposedly?
+					fi
+					### End Branch ### }}}
+
+					PS1+=" ${GitCol}[$GBra]${Color_off}"	# Add result to prompt
+
+					### Find Commit Status ### {{{
+					## Test Modified and Untracked for "0"
+					# local GDel="$(echo ${GStat} | tr ':' '\n' | grep -c "^[ MARC]D")"
+
+					local GAhe="$(echo ${GStat} | tr ':' '\n' | grep "^##" | grep -o "ahead [0-9]\{1,\}" | grep -o "[0-9]\{1,\}")"
+					if [ "$GAhe" ]; then
+						PS1+="${Green}↑${Color_off}${GAhe}"	# Ahead
+					fi
+
+					## Needs a `git fetch`
+					local GBeh="$(echo ${GStat} | tr ':' '\n' | grep "^##" | grep -o "behind [0-9]\{1,\}" | grep -o "[0-9]\{1,\}")"
+					if [ "$GBeh" ]; then
+						PS1+="${Red}↓${Color_off}${GBeh}"	# Behind
+					fi
+
+					local GMod="$(echo ${GStat} | tr ':' '\n' | grep -c "^[ MARC]M")"
+					if [ "$GMod" -gt "0" ]; then
+						PS1+="${Purple}≠${Color_off}${GMod}"	# Modified
+					fi
+
+					local GUnt="$(echo ${GStat} | tr ':' '\n' | grep -c "^\?")"
+					if [ "$GUnt" -gt "0" ]; then
+						PS1+="${Yellow}?${Color_off}${GUnt}"	# Untracked
+					fi
+					### End Commit Status ### }}}
+				fi
+			else
+				PS1+=" ${Red}(sshfs)${Color_off}${GBeh}" # sshfs
+			fi
+		  else
+			MISSING_ITEMS+="git-prompt, "
+		fi
+		### End Git Status ### }}}
+
+		PS1+="${BWhite}]\$${Color_off} "
+	fi
+}
+### Prompt Command ### }}}
+

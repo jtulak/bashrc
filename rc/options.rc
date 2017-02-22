@@ -1,0 +1,6 @@
+# Bash configuration
+# Jan Tulak <jan@tulak.me>
+# Uses tabstop=4; shiftwidth=4 tabs; foldmarker={{{,}}};
+# vim:set syntax=sh:
+
+set -o notify
