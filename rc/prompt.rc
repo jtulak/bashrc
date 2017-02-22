@@ -20,7 +20,7 @@ function __prompt_command() {
 	local EXIT="$?"	# This needs to be first
 	PS1=""
 
-	if [ $UID -eq "0" ];then
+	if [ $UID -eq "0" -a $HOSTNAME != "fedock" ];then
 		PS1+="${Red}\h \W ->${Color_off} "		# Set prompt for root
 	else
 		PS1+="${BWhite}[${Color_off}"
