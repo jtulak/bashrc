@@ -20,7 +20,9 @@ function __prompt_command() {
 	local EXIT="$?"	# This needs to be first
 	PS1=""
 
-	if [ $UID -eq "0" -a $HOSTNAME != "fedock" ];then
+	# Root should have its own prompt, except in docker containers.
+	# There we prefer the more informative user prompt.
+	if [ $UID -eq "0" -a ! -f /.dockerenv ];then
 		PS1+="${Red}\h \W ->${Color_off} "		# Set prompt for root
 	else
 		PS1+="${BWhite}[${Color_off}"
