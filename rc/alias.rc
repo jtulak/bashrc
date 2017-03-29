@@ -53,6 +53,11 @@ if [ ! -f /.dockerenv ]; then
 	alias fedora-pkg='docker run --rm -ti -v ~/redhat/fedora-packages/pkgs:/pkgs -v ~/redhat/fedora-packages/confs:/confs -h fedora-pkg jtulak/fedora-pkg /bin/bash'
 fi
 
+# Attach to a tmux session. If it doesn't exist, create a new one.
+function ta() {
+	name=$1
+	tmux a -t $name 2>/dev/null || tmux new -s $name
+}
 
 function lsdir() {
 	du -h --max-depth=1 $1 |sort -h
