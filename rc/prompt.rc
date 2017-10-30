@@ -80,7 +80,12 @@ function __prompt_command() {
 					### End Test Changes ### }}}
 
 					### Find Branch ### {{{
-					local GBra="$(echo ${GStat} | tr ':' '\n' | grep "^##" | cut -c4- | grep -o "^[-_a-zA-Z]\{1,\}[^\.]")"
+					local GBra="$(echo ${GStat} | \
+						    tr ':' '\n' | \
+						    grep "^##" | \
+						    cut -c4- | \
+						    sed "s/\.\.\..*$//" | \
+						    grep -o "^[-_a-zA-Z0-9.]\{1,\}")"
 					if [ "$GBra" ]; then
 						if [ "$GBra" == "master" ]; then
 							local GBra="M"			# Because why waste space
