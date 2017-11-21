@@ -37,7 +37,7 @@ function __prompt_command() {
 			local PSCol="$BPurple"
 		elif [ $HOSTNAME == 'home2' ]; then
 			local PSCol="$BBlue"
-		elif [[ $HOSTNAME == *fit.vutbr.cz ]]; then
+		elif [[ $HOSTNAME == 'rpi' ]]; then
 			local PSCol="$BGreen"
 		else
 			local PSCol="$BWhite"
