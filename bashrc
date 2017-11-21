@@ -28,9 +28,6 @@ for file in $HOME/.bash/rc/*.rc; do
 done
 
 
-# Make bash check its window size after a process completes
-shopt -s checkwinsize
-
 if [[ $platform == "osx" ]]; then
 	# Tell the terminal about the working directory at each prompt.
 	if [ "$TERM_PROGRAM" == "Apple_Terminal" ] && [ -z "$INSIDE_EMACS" ]; then
