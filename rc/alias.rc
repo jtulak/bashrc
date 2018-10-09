@@ -25,7 +25,6 @@ elif [[ $platform == "osx" ]]; then
 fi
 
 alias kinit="kinit jtulak@REDHAT.COM"
-alias make="make --warn-undefined-variable"
 alias ll="ls -lah"
 alias rm="rm -i"
 alias cp="cp -i"
