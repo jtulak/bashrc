@@ -41,6 +41,7 @@ alias gl="git log --pretty=format:'%h%d %s [%an]' --decorate --all --graph --col
 alias gp="git push"
 alias gr="git rebase"
 alias reboot="shutdown -r now"
+alias ssh-agent-autoload='eval "$(ssh-agent -s)" && ssh-add'
 
 alias vim="vim -p" # open with tabs
 
