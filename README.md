@@ -2,7 +2,7 @@
 My customized bash shell environment.
 
 # Usage
-    git clone git@github.com:BroukPytlik/bashrc.git ~/.bash
+    git clone git@github.com:jtulak/bashrc.git ~/.bash
     ln -s ~/.bash/bashrc ~/.bashrc
 
 Create a `~/.bash/private.rc` file for things like keys and passwords
