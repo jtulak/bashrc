@@ -7,6 +7,10 @@ if [[ $platform == "linux" ]]; then
   alias ls="ls --color=auto"
   alias mvim="gvim"
   alias dd="dd status=progress"
+  # hack for screen when sudo su-ing
+  function screen() {
+    /usr/bin/script -q -c "/usr/bin/screen ${*}" /dev/null
+  }
 elif [[ $platform == "osx" ]]; then
   alias ls="ls"
   alias gvim="mvim"
@@ -66,7 +70,4 @@ function lsdir() {
 	du -h --max-depth=1 $1 |sort -h
 }
 
-# hack for screen when sudo su-ing
-function screen() {
-  /usr/bin/script -q -c "/usr/bin/screen ${*}" /dev/null
-}
+
