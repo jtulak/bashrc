@@ -9,7 +9,7 @@
 #
 awk '
 BEGIN{
-	hashRe="[a-f0-9]{7,10}"
+	hashRe="[a-f0-9]{7,20}"
 	authorRe="\\[[^\\]]+\\]$"
 	refRe="^ ?\\([^\\)]+\\)"
 }
