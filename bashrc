@@ -44,6 +44,8 @@ if [[ $platform == "osx" ]]; then
 	fi
 fi
 
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+
 # source git autocompletion
 source ~/.bash/git-completion.bash
 
