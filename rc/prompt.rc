@@ -15,10 +15,23 @@ fi
 
 export PROMPT_COMMAND=__prompt_command	# Func to gen PS1 after CMDs
 
+# update title of the terminal window
+trap 'show_name' DEBUG
+function show_name() {
+	session="$(whoami)@$(hostname -s)"
+	if [[ -n "$BASH_COMMAND" ]]; then
+		echo -en "\033]0;$session: $(basename $(pwd))\007";
+	else
+		echo -en "\033]0;$session: $BASH_COMMAND\007";
+	fi
+}
+
 ### Prompt Command ### {{{
 function __prompt_command() {
 	local EXIT="$?"	# This needs to be first
 	PS1=""
+
+	show_name
 
 	# Root should have its own prompt, except in docker containers.
 	# There we prefer the more informative user prompt.
