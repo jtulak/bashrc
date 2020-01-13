@@ -28,7 +28,6 @@ elif [[ $platform == "osx" ]]; then
   }
 fi
 
-alias kinit="kinit jtulak@REDHAT.COM"
 alias ll="ls -lah"
 alias rm="rm -i"
 alias cp="cp -i"
@@ -36,12 +35,11 @@ alias l="ls -ail"
 alias cl="clear"
 alias ga="git add"
 alias gu="git add -u"
-alias gc="git commit --signoff"
+#alias gc="git commit --signoff"
+alias gc="git commit"
 alias gch="git checkout"
 alias gf="git fetch"
 alias gs="git status"
-#alias gl="git log --pretty=oneline --graph --color --decorate --all"
-alias gl="git log --pretty=format:'%h%d %s [%an]' --decorate --all --graph --color=always| ~/.bash/git-log-color.awk | less -RXFS"
 alias gp="git push"
 alias gr="git rebase"
 alias reboot="shutdown -r now"
@@ -50,6 +48,16 @@ alias ssh-agent-autoload='eval "$(ssh-agent -s)" && ssh-add'
 alias vim="vim -p" # open with tabs
 
 alias cvs="cvs -z3"
+
+function gl() {
+	if [[ $# -gt 0 ]]; then
+		# append arguments
+		git log --pretty=format:'%h%d %s [%an]' --decorate --graph --color=always $@ | ~/.bash/git-log-color.awk | less -RXFS
+	else
+		# no arguments
+		git log --pretty=format:'%h%d %s [%an]' --decorate --all --graph --color=always| ~/.bash/git-log-color.awk | less -RXFS
+	fi
+}
 
 # Docker aliases
 # ------------
@@ -61,10 +69,7 @@ if [ ! -f /.dockerenv ]; then
 fi
 
 # Attach to a tmux session. If it doesn't exist, create a new one.
-function ta() {
-	name=$1
-	tmux a -t $name 2>/dev/null || tmux new -s $name
-}
+alias ta="tmux new-session -A -s"
 
 function lsdir() {
 	du -h --max-depth=1 $1 |sort -h
